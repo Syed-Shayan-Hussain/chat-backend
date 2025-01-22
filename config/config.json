@@ -2,22 +2,22 @@
   "development": {
     "username": "postgres",
     "password": "postgres",
-    "database": "redis",
+    "database": "chat_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
-   "username": "postgres",
+    "username": "postgres",
     "password": "postgres",
-    "database": "redis",
+    "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "root",
-    "password": null,
+    "username": "postgres",
+    "password": "postgres",
     "database": "database_production",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   }
 }
