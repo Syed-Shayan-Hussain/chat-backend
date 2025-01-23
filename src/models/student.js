@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     phone_number: DataTypes.STRING,
     curriculum: DataTypes.INTEGER,
     grade: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER
+    user_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'student',

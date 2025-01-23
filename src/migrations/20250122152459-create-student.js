@@ -33,7 +33,7 @@ module.exports = {
       },
       user_id: {
         allowNull: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
