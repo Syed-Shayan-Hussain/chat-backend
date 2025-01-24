@@ -19,20 +19,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    first_name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    date_of_birth: DataTypes.DATE,
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
+    dateOfBirth: DataTypes.DATE,
     gender: DataTypes.STRING,
-    phone_number: DataTypes.STRING,
+    phoneNumber: DataTypes.STRING,
     curriculum: DataTypes.INTEGER,
     grade: DataTypes.INTEGER,
-    user_id: DataTypes.STRING
+    userId: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'student',
   });
   student.associate = (models) => {
-    student.belongsTo(models.user, { foreignKey: "user_id" });
+    student.belongsTo(models.user, { foreignKey: "userId" });
   };
   return student;
 };

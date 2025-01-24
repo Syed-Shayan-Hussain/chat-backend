@@ -1,40 +1,25 @@
+const { Op } = require("sequelize");
 const { role } = require("../models");
-const { body, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
 
 const createRole = async (req, res) => {
   try {
-    const validate = [
-      body("name")
-        .notEmpty()
-        .withMessage("Code is required")
-        .isLength({ min: 3 })
-        .withMessage("Name must be at least 3 characters long")
-        .custom(async (name) => {
-          const existingRole = await role.findOne({ where: { name } });
-          console.log(name)
-          if (existingRole) {
-            throw new Error("Name must be unique");
-          }
-        }),
-      body("code")
-        .notEmpty()
-        .withMessage("Code is required")
-        .custom(async (code) => {
-          const existingRole = await role.findOne({ where: { code } });
-          if (existingRole) {
-            throw new Error("Code must be unique");
-          }
-        }),
-    ];
-
-    // Execute validation middleware
-    Promise.all(validate.map((validation) => validation.run(req)));
-
+    // Validate input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    
+
+    const existingRole = await role.findOne({
+      where: {
+        [Op.or]: [{ role: req.body.role }, { code: req.body.code }],
+      },
+    });
+
+    if (existingRole) {
+      return res.status(400).json({ error: "Role or Code already exists" });
+    }
+
     const newRole = await role.create(req.body);
 
     return res.status(201).json(newRole);

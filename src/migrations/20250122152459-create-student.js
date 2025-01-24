@@ -8,19 +8,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING
       },
-      first_name: {
+      firstName: {
         type: Sequelize.STRING
       },
-      last_name: {
+      lastName: {
         type: Sequelize.STRING
       },
-      date_of_birth: {
+      dateOfBirth: {
         type: Sequelize.DATE
       },
       gender: {
         type: Sequelize.STRING
       },
-      phone_number: {
+      phoneNumber: {
         type: Sequelize.STRING
       },
       curriculum: {
@@ -31,7 +31,7 @@ module.exports = {
         allowNull: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      userId: {
         allowNull: true,
         type: Sequelize.STRING
       },

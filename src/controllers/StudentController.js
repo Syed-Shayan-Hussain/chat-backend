@@ -2,63 +2,85 @@ const { student, user, role } = require("../models");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../services/jwtService");
-// const { body, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
+const sequelize = require("../config/database");
 
 const studentRegister = async (req, res) => {
   try {
-    const {
-      email,
-      password,
-      confirm_password,
-      first_name,
-      last_name,
-      gender,
-      phone_number,
-      date_of_birth,
-      curriculum,
-      grade,
-    } = req.body;
+    await sequelize.transaction(async (t) => {
+      // Handle validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-    if (password !== confirm_password) {
-      return res.status(400).json({ error: "Passwords do not match" });
-    }
+      const {
+        email,
+        password,
+        confirmPassword,
+        firstName,
+        lastName,
+        gender,
+        phoneNumber,
+        dateOfBirth,
+        curriculum,
+        grade,
+      } = req.body;
+      console.log(dateOfBirth)
+      const existingUser = await user.findOne({ where: { email } });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      if (existingUser) {
+        return res
+          .status(400)
+          .json({ error: "User already exists. Try different email." });
+      }
 
-    const userId = uuidv4();
+      if (password !== confirmPassword) {
+        return res.status(400).json({ error: "Passwords do not match" });
+      }
 
-    const userData = {
-      id: userId,
-      email,
-      password: hashedPassword,
-      role: 1,
-    };
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await user.create(userData);
+      const userData = {
+        id: uuidv4(),
+        email,
+        password: hashedPassword,
+        role: 1,
+      };
 
-    const studentData = {
-      id: uuidv4(),
-      first_name,
-      last_name,
-      date_of_birth,
-      phone_number,
-      gender,
-      curriculum,
-      grade,
-      user_id: userId,
-    };
+      const newUser = await user.create(userData);
 
-    const newStudent = await student.create(studentData);
+      const studentData = {
+        id: uuidv4(),
+        firstName,
+        lastName,
+        dateOfBirth,
+        phoneNumber,
+        gender,
+        curriculum,
+        grade,
+        userId: userData.id,
+      };
 
-    return res.status(201).json({ message: "Student registered successfully" });
+      const newStudent = await student.create(studentData);
+
+      return res
+        .status(201)
+        .json({ message: "Student registered successfully" });
+    });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error.message });
   }
 };
 
 const studentLogin = async (req, res) => {
   try {
+    // Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { email, password, rememberMe } = req.body;
 
     const existingUser = await user.findOne({ where: { email } });
@@ -101,7 +123,7 @@ const studentLogout = async (req, res) => {
 const getStudentData = async (req, res) => {
   try {
     const studentData = await student.findOne({
-      where: { user_id: req.user.id },
+      where: { userId: req.user.id },
       include: [
         {
           model: user,
