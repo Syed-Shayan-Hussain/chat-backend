@@ -26,5 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'user',
   });
+  user.associate = (models) => {
+    user.hasOne(models.student, { foreignKey: "user_id" });
+    user.belongsTo(models.role, { foreignKey: "role", as: "userRole" }); // Alias the association
+  };  
   return user;
 };

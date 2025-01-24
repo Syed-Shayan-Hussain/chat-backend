@@ -55,9 +55,9 @@ const getRoles = async (req, res) => {
 const getRole = async (req, res) => {
   try {
     const roleId = req.params.id;
-    const role = await role.findByPk(roleId);
-    if (role) {
-      return res.status(200).json(role);
+    const roleItem = await role.findByPk(roleId);
+    if (roleItem) {
+      return res.status(200).json(roleItem);
     }
     return res.status(404).send("Role with the specified ID does not exist");
   } catch (error) {
